@@ -1,0 +1,12 @@
+tensorflow
+numpy
+opencv-python
+scikit-learn
+Pillow
+ultralytics
+pandas
+datasets 
+transformers 
+torch 
+torchvision
+PIL
