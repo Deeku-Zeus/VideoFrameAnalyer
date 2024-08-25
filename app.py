@@ -53,4 +53,4 @@ def classify_object():
     return jsonify({"message":"under development !!!!"})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)  # Make sure to listen on all network interfaces
+    app.run(host='0.0.0.0', port=5050, debug=True)  # Make sure to listen on all network interfaces

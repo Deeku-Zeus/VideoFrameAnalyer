@@ -53,9 +53,21 @@ if __name__ == "__main__":
     # Load the transfer learning model
     model = build_transfer_learning_model(num_classes)
 
-    # Provide the path to your test image
-    image_path = os.path.join("E:\\SystemFiles", "Pictures", "deeku.jpg")
+    image_path = ''
+
+    # Provide the path to your test image (for windows )
+    #image_path = os.path.join("E:\\SystemFiles", "Pictures", "deeku.jpg")
+
+    # for macOS 
+    # Get the path to the Downloads folder
+    downloads_folder = os.path.expanduser("~/Downloads")
+    # Specify the image filename
+    image_filename = "toby.jpeg"  # Replace with your actual file name
+    # Construct the full path to the image file
+    image_path = os.path.join(downloads_folder, image_filename)
     
+
+
     # Detect a maximum of 5 objects in the image
     detected_boxes = detect_objects(image_path, max_objects=5)
     

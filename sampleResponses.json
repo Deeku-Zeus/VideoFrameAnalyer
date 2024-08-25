@@ -1,0 +1,23 @@
+{
+  "detected_objects": [
+    {
+      "cat": {
+        "confidence": "0.85144377",
+        "coordinates": [363, 168, 518, 765]
+      }
+    },
+    {
+      "train": {
+        "confidence": "0.5655416",
+        "coordinates": [2, 0, 1018, 980]
+      }
+    },
+    {
+      "train": {
+        "confidence": "0.3533138",
+        "coordinates": [155, 10, 866, 751]
+      }
+    }
+  ],
+  "uid": "1df9b5370146464304916b24e5fc1c8e9175954e4d6781ef2a873411fd2f17fe"
+}
