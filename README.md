@@ -3,13 +3,12 @@ ML algos to analyse movie frame
 
 
 ## installation
-- windows
-pip install torch==2.3.0 torchvision==0.18.0 torchaudio==2.3.0
+pip install -r requirements.txt
 
-common
-pip install ultralytics
-pip install torch
-pip install -U "huggingface_hub[cli]"
+## usage
+python app.py
+
+visit http://localhost:5000
 
 ## references
 Ecom items dataset
