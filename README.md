@@ -15,7 +15,7 @@ pip install -r requirements.txt
 
 python app.py
 
-visit http://localhost:5000
+visit http://localhost:5050
 
 ## references
 
