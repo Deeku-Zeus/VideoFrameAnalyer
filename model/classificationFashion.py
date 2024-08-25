@@ -1,12 +1,12 @@
 # model/fashion_transfer_learning.py
 
 import tensorflow as tf
-from tensorflow.keras import layers, models
+from tensorflow.keras import layers, models # type: ignore
 import numpy as np
 from PIL import Image
 
 def build_transfer_learning_model(num_classes):
-    base_model = tf.keras.applications.MobileNetV2(weights='imagenet', include_top=False, input_shape=(128, 128, 3))
+    base_model = tf.keras.applications.ResNet50(weights='imagenet', include_top=False, input_shape=(128, 128, 3)) # type: ignore
     base_model.trainable = False  # Freeze the base model
 
     model = models.Sequential([

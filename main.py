@@ -1,6 +1,6 @@
 # main.py
 import os
-from model.classificationFashionMNIST import build_transfer_learning_model, preprocess_image, classify_image
+from model.classificationFashion import build_transfer_learning_model, preprocess_image, classify_image
 from model.classificationColor import get_average_color, classify_color
 from model.objectDetection import detect_objects
 import matplotlib.pyplot as plt
@@ -54,7 +54,7 @@ if __name__ == "__main__":
     model = build_transfer_learning_model(num_classes)
 
     # Provide the path to your test image
-    image_path = os.path.join("E:\\SystemFiles", "Pictures", "test.jpg")
+    image_path = os.path.join("E:\\SystemFiles", "Pictures", "deeku.jpg")
     
     # Detect a maximum of 5 objects in the image
     detected_boxes = detect_objects(image_path, max_objects=5)
