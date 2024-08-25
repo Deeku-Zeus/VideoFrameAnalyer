@@ -24,3 +24,6 @@ https://mmlab.ie.cuhk.edu.hk/projects/DeepFashion.html
 
 To make vendors be able to add catalogs / label them
 https://pypi.org/project/labelImg/
+
+used this
+https://huggingface.co/valentinafeve/yolos-fashionpedia/blob/main/README.md

@@ -62,7 +62,7 @@ if __name__ == "__main__":
     # Get the path to the Downloads folder
     downloads_folder = os.path.expanduser("~/Downloads")
     # Specify the image filename
-    image_filename = "toby.jpeg"  # Replace with your actual file name
+    image_filename = "IMG_5669.jpeg"  # Replace with your actual file name
     # Construct the full path to the image file
     image_path = os.path.join(downloads_folder, image_filename)
     
