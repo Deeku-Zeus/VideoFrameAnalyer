@@ -5,9 +5,7 @@ from transformers import AutoImageProcessor, AutoModelForObjectDetection
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import json
-import sys
-sys.path.append('/Users/deekshitswamy/Documents/GitHub/EcomMediaPlayer/VideoFrameAnalyer')
-from utilities.common import generate_unique_hash, filter_overlapping_entries
+from VideoFrameAnalyzer.utilities.common import generate_unique_hash
 
 def load_model():
     """
@@ -115,22 +113,10 @@ def save_image_with_detections(image_path, output_path, detections):
 # Example usage:
 if __name__ == "__main__":
     #image_path = os.path.expanduser("~/Downloads/test7.png")  # Replace with your image path
-    image_path = os.path.expanduser("~/Documents/GitHub/EcomMediaPlayer/MediaPlayerBackend/storage/app/public/uploads/test123.png")  # Replace with your image path
-    #output_path = os.path.expanduser("~/Downloads/test7_with_detections.png")  # Replace with desired output path
-    output_path = '../outputs/img/output_.png'
+    image_path = os.path.expanduser("~/Documents/GitHub/EcomMediaPlayer/MediaPlayerBackend/storage/app/public/uploads/test.png")  # Replace with your image path
+    output_path = os.path.expanduser("~/Downloads/test7_with_detections.png")  # Replace with desired output path
     
     detections = detect_objects(image_path, max_objects=5)
-
-    # # Convert JSON string to Python list
-    # data = json.loads(detections)
-    # # Apply the filter
-    # filtered_data = filter_overlapping_entries(data, iou_threshold=0.5)
-    # # Convert filtered data back to JSON
-    # filtered_json = json.dumps(filtered_data, indent=2)
-    # print(filtered_json)
-
-
-    #save_image_with_detections(image_path, output_path, detections)
     save_image_with_detections(image_path, output_path, detections)
     
     print("Detections JSON:")
