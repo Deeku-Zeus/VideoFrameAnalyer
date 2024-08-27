@@ -63,10 +63,12 @@ def detect_objects(image_path, max_objects=5):
                 box = box.tolist()
                 xmin, ymin, xmax, ymax = box
                 detections.append({
-                    label_text: {
+                    "obj":{
                         "confidence": score.item(),  # Convert to a Python float
                         "coordinates": [xmin, ymin, xmax, ymax],
-                        'uid': generate_unique_hash()
+                        'uid': generate_unique_hash(),
+                        'color': 'grey',
+                        'tags' : [tag.strip() for tag in label_text.split(",")]
                     }
                 })
                 if len(detections) >= max_objects:
