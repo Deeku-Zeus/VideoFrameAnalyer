@@ -23,7 +23,7 @@ model = build_transfer_learning_model(num_classes)
 def detect():
     data = request.json
     object_count = int(data.get('object_count', 5))
-    image_path = data.get('image_path', None)
+    image_path = data.get('image', None)
     # Access the uploaded file
     if image_path is None:
         return jsonify({'error': 'path is needed'}), 400
