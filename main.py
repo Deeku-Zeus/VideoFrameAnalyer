@@ -2,7 +2,7 @@
 import os
 from model.classificationFashion import build_transfer_learning_model, preprocess_image, classify_image
 from model.classificationColor import get_average_color, classify_color
-from model.objectDetection import detect_objects
+from model.objectDetection import get_detect_objects_list
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from PIL import Image
@@ -62,17 +62,18 @@ if __name__ == "__main__":
     # Get the path to the Downloads folder
     downloads_folder = os.path.expanduser("~/Downloads")
     # Specify the image filename
-    image_filename = "IMG_5669.jpeg"  # Replace with your actual file name
+    image_filename = "fashion_5.166349_DeekuZeus.png"  # Replace with your actual file name
     # Construct the full path to the image file
     image_path = os.path.join(downloads_folder, image_filename)
     
 
 
     # Detect a maximum of 5 objects in the image
-    detected_boxes = detect_objects(image_path, max_objects=5)
+    detected_boxes = get_detect_objects_list(image_path, max_objects=5)
+    print(detected_boxes)
     
     # Display the image with bounding boxes, classifications, and color information
-    display_image_with_rectangles(image_path, detected_boxes, class_names, model)
+    #display_image_with_rectangles(image_path, detected_boxes, class_names, model)
 
 
 

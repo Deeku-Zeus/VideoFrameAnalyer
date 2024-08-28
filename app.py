@@ -5,27 +5,27 @@ from model.classificationFashion import build_transfer_learning_model, preproces
 from model.classificationColor import get_average_color, classify_color
 from model.classificationYoloFashion import detect_objects
 from PIL import Image
-from utilities.common import generate_unique_hash
+from utilities.common import generate_unique_hash, save_image_with_detections
 
 app = Flask(__name__)
 
 # Define class names for Fashion MNIST
-class_names = [
-    "T-shirt/top", "Trouser", "Pullover", "Dress", "Coat",
-    "Sandal", "Shirt", "Sneaker", "Bag", "Ankle boot"
-]
-num_classes = len(class_names) # 10
+# class_names = [
+#     "T-shirt/top", "Trouser", "Pullover", "Dress", "Coat",
+#     "Sandal", "Shirt", "Sneaker", "Bag", "Ankle boot"
+# ]
+#num_classes = len(class_names) # 10
 # Load the transfer learning model
-model = build_transfer_learning_model(num_classes)
+#model = build_transfer_learning_model(num_classes)
 
 # @app.route('/detect', defaults={'object_count':5,'show_objects': False}, methods=['GET'])
 @app.route('/detect', methods=['POST'])
 def detect():
     data = request.json
     object_count = int(data.get('object_count', 5))
-    image_path = data.get('image', None)
+    image_name = data.get('image', None)
     # Access the uploaded file
-    if image_path is None:
+    if image_name is None:
         return jsonify({'error': 'path is needed'}), 400
 
     # file = request.files['image']
@@ -40,9 +40,11 @@ def detect():
     # except Exception as e:
     #     return jsonify({'error': f'Invalid image file: {str(e)}'}), 400
     
-    image_path = os.path.expanduser("~/Documents/GitHub/EcomMediaPlayer/MediaPlayerBackend/storage/app/public/uploads/{}".format(image_path))
+    image_path = os.path.expanduser("~/Documents/GitHub/EcomMediaPlayer/MediaPlayerBackend/storage/app/public/uploads/{}".format(image_name))
+    #output_path = os.path.expanduser("~/Documents/GitHub/EcomMediaPlayer/MediaPlayerBackend/storage/app/public/outputs/output_{}".format(image_name))
     # Detect objects
     detected_objects = detect_objects(image_path, max_objects=object_count)
+    #save_image_with_detections(image_path, output_path, detected_objects)
     
     # Return detected boxes as JSON response
     return detected_objects

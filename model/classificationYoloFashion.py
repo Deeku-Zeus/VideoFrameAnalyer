@@ -100,15 +100,16 @@ def save_image_with_detections(image_path, output_path, detections):
 
     # Draw bounding boxes and labels on the image
     for detection in detection_data:
-        label_text, details = next(iter(detection.items()))  # Get the label and details
+        id, details = next(iter(detection.items()))  # Get the label and details
         coordinates = details["coordinates"]
         score = details["confidence"]
         uid = details["uid"]
+        label_text = details["tags"]
 
         xmin, ymin, xmax, ymax = coordinates
         rect = patches.Rectangle((xmin, ymin), xmax - xmin, ymax - ymin, linewidth=2, edgecolor="r", facecolor="none")
         ax.add_patch(rect)
-        plt.text(xmin, ymin, f"{label_text}: {score:.2f} ({uid})", color="white", fontsize=12, backgroundcolor="red")
+        plt.text(xmin, ymin, f"{label_text}: {score:.2f} ({uid[:6]})", color="white", fontsize=12, backgroundcolor="red")
 
     plt.axis("off")
     plt.savefig(output_path, bbox_inches="tight", pad_inches=0)
@@ -117,7 +118,7 @@ def save_image_with_detections(image_path, output_path, detections):
 # Example usage:
 if __name__ == "__main__":
     #image_path = os.path.expanduser("~/Downloads/test7.png")  # Replace with your image path
-    image_path = os.path.expanduser("~/Documents/GitHub/EcomMediaPlayer/MediaPlayerBackend/storage/app/public/uploads/test123.png")  # Replace with your image path
+    image_path = os.path.expanduser("~/Documents/GitHub/EcomMediaPlayer/MediaPlayerBackend/storage/app/public/uploads/fashion_5.166349_DeekuZeus.png")  # Replace with your image path
     #output_path = os.path.expanduser("~/Downloads/test7_with_detections.png")  # Replace with desired output path
     output_path = '../outputs/img/output_.png'
     

@@ -2,6 +2,9 @@ import hashlib
 import time
 import os
 import json
+from PIL import Image
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
 
 def generate_unique_hash():
     # Combine a unique identifier with current time and random bytes
@@ -86,3 +89,41 @@ def filter_overlapping_entries(data, iou_threshold=0.5):
     filtered_data = [data[i] for i in keep_indices]
     
     return filtered_data
+
+def save_image_with_detections(image_path, output_path, detections):
+    """
+    Save the image with bounding boxes for detected objects.
+
+    Parameters:
+    - image_path (str): Path to the original image file.
+    - output_path (str): Path to save the image with detections.
+    - detections (str): JSON string containing detected objects with labels and coordinates.
+    """
+    # Load the image
+    image = Image.open(image_path).convert("RGB")
+    
+    # Plot the image with bounding boxes
+    plt.figure(figsize=(10, 10))
+    plt.imshow(image)
+    ax = plt.gca()
+
+    # Load detection data from JSON
+    detection_data = json.loads(detections)
+
+    # Draw bounding boxes and labels on the image
+    for detection in detection_data:
+        id, details = next(iter(detection.items()))  # Get the label and details
+        coordinates = details["coordinates"]
+        score = details["confidence"]
+        uid = details["uid"]
+        label_text = details["tags"]
+
+        xmin, ymin, xmax, ymax = coordinates
+        rect = patches.Rectangle((xmin, ymin), xmax - xmin, ymax - ymin, linewidth=2, edgecolor="r", facecolor="none")
+        ax.add_patch(rect)
+        plt.text(xmin, ymin, f"{label_text}: {score:.2f} ({uid[:6]})", color="white", fontsize=12, backgroundcolor="red")
+
+    plt.axis("off")
+    plt.savefig(output_path, bbox_inches="tight", pad_inches=0)
+    plt.close()
+    print("File Saved !!")
