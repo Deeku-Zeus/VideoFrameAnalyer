@@ -1,3 +1,4 @@
+import multiprocessing
 import os
 import torch
 from PIL import Image
@@ -6,8 +7,12 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import json
 import sys
+import math
 sys.path.append('/Users/deekshitswamy/Documents/GitHub/EcomMediaPlayer/VideoFrameAnalyer')
 from utilities.common import generate_unique_hash, filter_overlapping_entries
+
+# Set the number of threads for PyTorch to use
+torch.set_num_threads(multiprocessing.cpu_count())
 
 def load_model():
     """
@@ -17,7 +22,7 @@ def load_model():
     model = AutoModelForObjectDetection.from_pretrained("valentinafeve/yolos-fashionpedia")
     return processor, model
 
-def detect_objects(image_path, max_objects=5):
+def detect_objects(image_path, image_name, max_objects=5):
     """
     Detect objects in the image and return a JSON with detected objects and their coordinates.
 
@@ -31,7 +36,7 @@ def detect_objects(image_path, max_objects=5):
     # Load the model and processor
     processor, model = load_model()
 
-    # Define the selected class names
+    # Selected class names for filtering
     selected_classes = [
         "shirt, blouse", "top, t-shirt, sweatshirt", "sweater", "jacket", 
         "vest", "pants", "shorts", "skirt", "coat", "dress", 
@@ -44,17 +49,17 @@ def detect_objects(image_path, max_objects=5):
     image = Image.open(image_path).convert("RGB")
 
     # Process the image for the model
-    inputs = processor(images=image, return_tensors="pt")  # Pass the image object, not the path
+    inputs = processor(images=image, return_tensors="pt")
 
     # Perform inference
     with torch.no_grad():
         outputs = model(**inputs)
 
-    # Get the bounding boxes, labels, and scores
+    # Post-process the results
     target_sizes = torch.tensor([image.size[::-1]])
     results = processor.post_process_object_detection(outputs, target_sizes=target_sizes)[0]
 
-    # Prepare the output in JSON format
+    # Prepare detections
     detections = []
     for box, score, label in zip(results["boxes"], results["scores"], results["labels"]):
         if score > 0.5:  # Show only predictions with a high confidence score
@@ -64,11 +69,12 @@ def detect_objects(image_path, max_objects=5):
                 xmin, ymin, xmax, ymax = box
                 detections.append({
                     "obj":{
-                        "confidence": score.item(),  # Convert to a Python float
-                        "coordinates": [xmin, ymin, xmax, ymax],
+                        "confidence": round(score.item(),2),  # Convert to a Python float
+                        "coordinates": [math.floor(xmin), math.floor(ymin), math.floor(xmax), math.floor(ymax)],
                         'uid': generate_unique_hash(),
                         'color': 'grey',
-                        'tags' : [tag.strip() for tag in label_text.split(",")]
+                        'tags': [tag.strip() for tag in label_text.split(",")],
+                        'crop_image_name': image_name[:-4]
                     }
                 })
                 if len(detections) >= max_objects:
@@ -77,6 +83,12 @@ def detect_objects(image_path, max_objects=5):
     # Convert the result to JSON
     result_json = json.dumps(detections, indent=2)
     return result_json
+
+# Function to process multiple images in parallel
+def process_images_in_parallel(image_paths,image_name, max_objects=5):
+    with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
+        results = pool.starmap(detect_objects, [(image_path,image_name, max_objects) for image_path in image_paths])
+    return results
 
 def save_image_with_detections(image_path, output_path, detections):
     """

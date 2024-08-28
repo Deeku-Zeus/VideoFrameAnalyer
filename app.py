@@ -43,7 +43,8 @@ def detect():
     image_path = os.path.expanduser("~/Documents/GitHub/EcomMediaPlayer/MediaPlayerBackend/storage/app/public/uploads/{}".format(image_name))
     #output_path = os.path.expanduser("~/Documents/GitHub/EcomMediaPlayer/MediaPlayerBackend/storage/app/public/outputs/output_{}".format(image_name))
     # Detect objects
-    detected_objects = detect_objects(image_path, max_objects=object_count)
+    detected_objects = detect_objects(image_path, image_name, max_objects=object_count)
+    #detected_objects = get_detect_objects_list(image_path, image_name, max_objects=object_count)
     #save_image_with_detections(image_path, output_path, detected_objects)
     
     # Return detected boxes as JSON response
