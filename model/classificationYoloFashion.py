@@ -81,6 +81,17 @@ def detect_objects(image_path, image_name, max_objects=5):
                     break
 
     # Convert the result to JSON
+    if not len(detections) :
+        detections.append({
+            "obj":{
+                "confidence": '',
+                "coordinates": [],
+                'uid': generate_unique_hash(),
+                'color': '',
+                'tags': [],
+                'crop_image_name': image_name[:-4]
+            }
+        })
     result_json = json.dumps(detections, indent=2)
     return result_json
 

@@ -46,18 +46,6 @@ def detect():
     detected_objects = detect_objects(image_path, image_name, max_objects=object_count)
     #detected_objects = get_detect_objects_list(image_path, image_name, max_objects=object_count)
     #save_image_with_detections(image_path, output_path, detected_objects)
-    if len(detected_objects) == 0 :
-        detected_objects = []
-        detected_objects.append({
-            "obj":{
-                "confidence": '',
-                "coordinates": [],
-                'uid': generate_unique_hash(),
-                'color': '',
-                'tags': [],
-                'crop_image_name': image_name[:-4]
-            }
-        })
     
     # Return detected boxes as JSON response
     return detected_objects
