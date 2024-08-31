@@ -4,10 +4,14 @@ import torch
 from PIL import Image
 from transformers import AutoImageProcessor, AutoModelForObjectDetection
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Agg')  # Use a non-GUI backend
 import matplotlib.patches as patches
 import json
 import sys
 import math
+import random
+from concurrent.futures import ThreadPoolExecutor, as_completed
 sys.path.append('/Users/deekshitswamy/Documents/GitHub/EcomMediaPlayer/VideoFrameAnalyer')
 from utilities.common import generate_unique_hash, filter_overlapping_entries
 
@@ -72,7 +76,10 @@ def detect_objects(image_path, image_name, max_objects=5):
                         "confidence": round(score.item(),2),  # Convert to a Python float
                         "coordinates": [math.floor(xmin), math.floor(ymin), math.floor(xmax), math.floor(ymax)],
                         'uid': generate_unique_hash(),
-                        'color': 'grey',
+                        'color': random.choice([
+                            'red', 'blue', 'green', 'yellow', 'orange',
+                            'purple', 'pink', 'brown', 'black', 'white'
+                        ]),
                         'tags': [tag.strip() for tag in label_text.split(",")],
                         'crop_image_name': image_name[:-4]
                     }
@@ -100,6 +107,37 @@ def process_images_in_parallel(image_paths,image_name, max_objects=5):
     with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
         results = pool.starmap(detect_objects, [(image_path,image_name, max_objects) for image_path in image_paths])
     return results
+
+
+## related to file save of processed images
+def process_image(file_name, upload_dir, output_dir, processed_file):
+    file_path = os.path.join(upload_dir, file_name)
+    detections = detect_objects(file_path,file_name, max_objects=5)
+    output_path = os.path.join(output_dir, file_name)
+    save_image_with_detections(file_path, output_path, detections)
+    return file_name
+
+def process_images(upload_dir, output_dir, processed_file):
+    files = [f for f in os.listdir(upload_dir) if os.path.isfile(os.path.join(upload_dir, f))]
+
+    # Read the list of processed files
+    processed_files = set()
+    if os.path.exists(processed_file):
+        with open(processed_file, 'r') as f:
+            processed_files = set(line.strip() for line in f)
+
+    # Process each image file
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        futures = []
+        for file_name in files:
+            if file_name not in processed_files:
+                futures.append(executor.submit(process_image, file_name, upload_dir, output_dir, processed_file))
+
+        for future in as_completed(futures):
+            processed_file_name = future.result()
+            with open(processed_file, 'a') as f:
+                f.write(processed_file_name + '\n')
+            print(f'Processed and moved: {processed_file_name}')
 
 def save_image_with_detections(image_path, output_path, detections):
     """
@@ -141,11 +179,13 @@ def save_image_with_detections(image_path, output_path, detections):
 # Example usage:
 if __name__ == "__main__":
     #image_path = os.path.expanduser("~/Downloads/test7.png")  # Replace with your image path
-    image_path = os.path.expanduser("~/Documents/GitHub/EcomMediaPlayer/MediaPlayerBackend/storage/app/public/uploads/fashion_5.166349_DeekuZeus.png")  # Replace with your image path
+    image_path = os.path.expanduser("~/Documents/GitHub/EcomMediaPlayer/MediaPlayerBackend/storage/app/public/uploads/")  # Replace with your image path
     #output_path = os.path.expanduser("~/Downloads/test7_with_detections.png")  # Replace with desired output path
-    output_path = '../outputs/img/output_.png'
+    #output_path = '../outputs/img/output_.png'
+    output_path = os.path.expanduser("~/Documents/GitHub/EcomMediaPlayer/MediaPlayerBackend/storage/app/public/outputs/")
+    # MediaPlayerBackend/storage/app/public/outputs
     
-    detections = detect_objects(image_path, max_objects=5)
+    #detections = detect_objects(image_path, max_objects=5)
 
     # # Convert JSON string to Python list
     # data = json.loads(detections)
@@ -157,7 +197,7 @@ if __name__ == "__main__":
 
 
     #save_image_with_detections(image_path, output_path, detections)
-    save_image_with_detections(image_path, output_path, detections)
-    
-    print("Detections JSON:")
-    print(detections)
+    #save_image_with_detections(image_path, output_path, detections)
+
+    processed_file = os.path.join(image_path, 'processed_files.txt')
+    process_images(image_path, output_path, processed_file)
